@@ -40,8 +40,8 @@ int main() {
         totalTurnAroundTime += turnAroundTime[i];
     }
 
-    avgTurnAroundTime = totalTurnAroundTime/n;
-    avgWaitTime = totalWaitTime/n;
+    avgTurnAroundTime = (float)totalTurnAroundTime/n;
+    avgWaitTime = (float)totalWaitTime/n;
 
     // Display the result in a formatted table
     printf("\n FCFS Scheduling Results:\n");
