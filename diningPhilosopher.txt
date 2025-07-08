@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+pthread_mutex_t chopstick[5];
+pthread_t philosopher[5];
+void* runner(void* arg) {
+int id = *(int*)arg;
+printf("Philosopher %d is thinking\n", id);
+sleep(2);
+if (id == 4) {
+pthread_mutex_lock(&chopstick[(id + 1) % 5]);
+pthread_mutex_lock(&chopstick[id]);
+} else {
+pthread_mutex_lock(&chopstick[id]);
+pthread_mutex_lock(&chopstick[(id + 1) % 5]);
+}
+printf("Philosopher %d is eating\n", id);
+sleep(3);
+pthread_mutex_unlock(&chopstick[id]);
+pthread_mutex_unlock(&chopstick[(id + 1) % 5]);
+printf("Philosopher %d finished eating\n", id);
+free(arg);
+return NULL;
+}
+int main() {
+for (int i = 0; i < 5; i++) {
+pthread_mutex_init(&chopstick[i], NULL);
+}
+for (int i = 0; i < 5; i++) {
+int* id = malloc(sizeof(int));
+*id = i;
+pthread_create(&philosopher[i], NULL, runner, id);
+sleep(1);
+}
+for (int i = 0; i < 5; i++) {
+pthread_join(philosopher[i], NULL);
+}
+for (int i = 0; i < 5; i++) {
+pthread_mutex_destroy(&chopstick[i]);
+}
+return 0;
+}
